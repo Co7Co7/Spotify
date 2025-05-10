@@ -1,0 +1,95 @@
+---
+title: "Análisis en Spotify con R"
+author: "Francisco Flor"
+date: "2025-05-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+# Librerías necesarias
+library(spotifyr)
+library(tidyverse)
+library(knitr)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 🎧 Análisis API Spotify con R
+
+En este documento exploraremos datos de artistas y playlists usando la librería `spotifyr`.  
+Mostraremos cómo obtener información de **Bad Bunny** y una **playlist de openings**.
+
+---
+
+## 🔍 Búsqueda de Artistas y Canciones
+
+Primero, realizamos la búsqueda de un artista y una canción en Spotify.
+
+
+```{r}
+# Buscar al artista "Bad Bunny"
+bad_bunny <- search_spotify('bad bunny', 'artist')
+
+# Buscar la canción "Peace Sign"
+peace_sign <- search_spotify('peace sign', 'track')
+```
+🎶 Top Canciones de Bad Bunny
+
+Ahora obtenemos las canciones más populares de Bad Bunny.
+
+```{r}
+# Obtener top tracks de Bad Bunny
+top_bad_bunny <- get_artist_top_tracks(
+  id = '4q3ewBCX7sLwd24euuV69X',  # ID del artista
+  include_meta_info = FALSE
+)
+
+# Ver nombres de columnas disponibles
+names(top_bad_bunny)
+
+
+#Ordenadas pro pupularidad
+top_bad_bunny %>%
+  select(name, popularity) %>%
+  arrange(-popularity)
+
+```
+
+📂 Selección de una Playlist Personal para analizar
+
+```{r}
+# Seleccionar la playlist de openings
+opennings <- get_playlist(
+  playlist_id = '5dcZ9MoexhXHFtoMkmhP7d',
+  fields = NULL,
+  market = NULL,
+  authorization = get_spotify_access_token()
+)
+```
+
+
+🎵 Canciones de la Playlist
+
+```{r}
+# Obtener las canciones de la playlist
+openingsplist <- get_playlist_tracks(
+  playlist_id = '5dcZ9MoexhXHFtoMkmhP7d',
+  fields = NULL,
+  limit = 100,
+  offset = 0,
+  market = NULL,
+  authorization = get_spotify_access_token(),
+  include_meta_info = FALSE
+)
+
+
+#Nombre de las columnas 
+names(openingsplist)
+
+#Ordenamos las canciones de la playlist según su popularidad.
+
+openingsplist %>%
+  select(track.name, track.popularity) %>%
+  arrange(-track.popularity)
+
+```
+
